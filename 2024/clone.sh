@@ -1,7 +1,7 @@
 #!/bin/sh
 # This script was only tested in Mac OS X. It uses BSD tools, not GNU.
 day=$(echo $1 | sed 's/^0//')
-base_url="https://adventofcode.com/2023/day/${day}"
+base_url="https://adventofcode.com/2024/day/${day}"
 cookies="cookie: session=$AOC_SID"
 curl $base_url -s -H "$cookies" | pandoc -f html -t plain | sed -n '/^--- Day/,$p' > tmp
 
