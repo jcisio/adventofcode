@@ -18,7 +18,7 @@ class Problem:
         return sum([abs(x-y) for x, y in zip(lleft, lright)])
 
     def solve2(self):
-        return 0
+        return sum(sum([r for r in self.input['right'] if l==r]) for l in self.input['left'])
 
 
 class Solver:
@@ -37,4 +37,4 @@ class Solver:
 f = open(__file__[:-3] + '.in', 'r')
 solver = Solver(f.read().strip().split('\n'))
 print("Puzzle 1: ", solver.solve())
-#print("Puzzle 2: ", solver.solve(2))
+print("Puzzle 2: ", solver.solve(2))
