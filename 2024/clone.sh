@@ -22,6 +22,6 @@ git add d$1.in
 # https://www.reddit.com/r/adventofcode/wiki/faqs/copyright/inputs/
 curl $base_url"/input" -s -H "$cookies" > d$1.test
 
-#git commit -m "Day $1"
+git commit -m "Day $1"
 cat template.py >> d$1.py
 rm tmp
