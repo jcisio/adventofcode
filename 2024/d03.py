@@ -19,7 +19,16 @@ class Problem:
         return sum([self.do_mul(t) for t in x])
 
     def solve2(self):
-        return 0
+        s = 0
+        do = True
+        for op in re.findall("(do\(\)|don't\(\)|mul\(\d{1,3},\d{1,3}\))", ''.join(self.input)):
+            if op == "do()":
+                do = True
+            elif op == "don't()":
+                do = False
+            elif do:
+                s += self.do_mul(op)
+        return s
 
 
 class Solver:
@@ -34,4 +43,4 @@ class Solver:
 f = open(__file__[:-3] + '.test', 'r')
 solver = Solver(f.read().strip().split('\n'))
 print("Puzzle 1: ", solver.solve())
-#print("Puzzle 2: ", solver.solve(2))
+print("Puzzle 2: ", solver.solve(2))
