@@ -10,9 +10,7 @@ import parse
 
 class Problem:
     def __init__(self, input) -> None:
-        self.ordering = []
         self.updates = []
-        self.updates_list = []
         self.precedence = defaultdict(list)
         ordering = True
         for line in input:
@@ -20,40 +18,25 @@ class Problem:
                 ordering = False
                 continue
             if ordering:
-                o = list(map(int, line.split('|')))
-                self.ordering.append(o)
+                o = tuple(map(int, line.split('|')))
                 self.precedence[o[0]].append(o[1])
             else:
-                x = line.split(',')
-                self.updates.append({int(x[i]):i for i in range(len(x))})
-                self.updates_list.append(list(map(int, x)))
+                self.updates.append(list(map(int, line.split(','))))
 
-    def is_correct(self, update):
-        return all([update[o[0]] < update[o[1]] for o in self.ordering if o[0] in update and o[1] in update])
-
-    def solve(self):
-        s = 0
-        for i, u in enumerate(self.updates):
-            if self.is_correct(u):
-                for k in u.keys():
-                    if u[k] == len(u)//2:
-                        s += k
-        return s
-    
     def sort(self, update):
+        correct = True
         for i in range(len(update)-1):
             for j in range(i+1, len(update)):
                 if update[j] in self.precedence and update[i] in self.precedence[update[j]]:
+                    correct = False
                     update[i], update[j] = update[j], update[i]
-        return update
+        return (correct, update)
 
-    def solve2(self):
-        s = 0
-        for i,u in enumerate(self.updates_list):
-            if self.is_correct(self.updates[i]):
-                continue
-            u = self.sort(u)
-            s += u[len(u)//2]
+    def solve(self):
+        s = [0, 0]
+        for u in self.updates:
+            correct, u = self.sort(u)
+            s[0 if correct else 1] += u[len(u)//2]
         return s
 
 class Solver:
@@ -65,7 +48,8 @@ class Solver:
         return problem.solve() if part==1 else problem.solve2()
 
 
-f = open(__file__[:-3] + '.in', 'r')
+f = open(__file__[:-3] + '.test', 'r')
 solver = Solver(f.read().strip().split('\n'))
-print("Puzzle 1: ", solver.solve())
-print("Puzzle 2: ", solver.solve(2))
+s = solver.solve()
+print("Puzzle 1: ", s[0])
+print("Puzzle 2: ", s[1])
