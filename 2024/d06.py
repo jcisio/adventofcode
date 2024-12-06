@@ -3,13 +3,13 @@ Advent Of Code
 --- Day 6: Guard Gallivant ---
 https://adventofcode.com/2024/day/6
 """
-from __future__ import annotations
-from collections import defaultdict
-import parse
+import time
 
+
+example, parts = True, [1, 2]
 
 class Problem:
-    def __init__(self, input) -> None:
+    def __init__(self, input):
         self.input = input
         self.nr = len(input)
         self.nc = len(input[0])
@@ -57,7 +57,7 @@ class Problem:
 
 
 class Solver:
-    def __init__(self, input) -> None:
+    def __init__(self, input):
         self.input = input
 
     def solve(self, part=1):
@@ -65,7 +65,10 @@ class Solver:
         return problem.solve() if part==1 else problem.solve2()
 
 
-f = open(__file__[:-3] + '.test', 'r')
+f = open(__file__[:-3] + '.in' if example else '.test', 'r')
 solver = Solver(f.read().strip().split('\n'))
-print("Puzzle 1: ", solver.solve())
-print("Puzzle 2: ", solver.solve(2))
+for part in parts:
+    start = time.time()
+    result = solver.solve(part)
+    length = time.time() - start
+    print(f"Puzzle {part}: \033[1;31m{result}\033[0m in {length*1000:.0f} ms")
