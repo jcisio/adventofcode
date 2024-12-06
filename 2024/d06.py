@@ -34,9 +34,39 @@ class Problem:
             else:
                 break
         return len(visited)
+    
+    # stuck -> 0
+    def visited(self):
+        visited = set([self.p])
+        states = set([(self.p, self.d)])
+        while True:
+            next = (self.p[0] + self.dirs[self.d][0], self.p[1] + self.dirs[self.d][1])
+            if 0 <= next[0] < self.nr and 0 <= next[1] < self.nc:
+                if self.input[next[0]][next[1]] == '#':
+                    self.d = (self.d + 1) % 4
+                else:
+                    self.p = next
+                    visited.add(next)
+                if (self.p, self.d) in states:
+                    return 0
+                states.add((self.p, self.d))
+            else:
+                return len(visited)
 
     def solve2(self):
-        return 0
+        s = 0
+        for r in range(self.nr):
+            for c in range(self.nc):
+                if self.input[r][c] == '.':
+                    self.input[r] = self.input[r][:c] + '#' + self.input[r][c+1:]
+                    p = self.p
+                    d = self.d
+                    if self.visited() == 0:
+                        s += 1
+                    self.input[r] = self.input[r][:c] + '.' + self.input[r][c+1:]
+                    self.p = p
+                    self.d = d
+        return s
 
 
 class Solver:
@@ -50,5 +80,5 @@ class Solver:
 
 f = open(__file__[:-3] + '.test', 'r')
 solver = Solver(f.read().strip().split('\n'))
-print("Puzzle 1: ", solver.solve())
-#print("Puzzle 2: ", solver.solve(2))
+#print("Puzzle 1: ", solver.solve())
+print("Puzzle 2: ", solver.solve(2))
