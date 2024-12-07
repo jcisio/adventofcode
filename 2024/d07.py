@@ -16,18 +16,22 @@ class Problem:
             r = row.split(': ')
             self.input.append((int(r[0]), list(map(int, r[1].split()))))
 
-    def is_ok(self, test, numbers):
+    def is_ok(self, test, numbers, part=1):
         if test < numbers[0]:
             return False
         if len(numbers) == 1:
             return test == numbers[0]
-        return self.is_ok(test, [numbers[0] + numbers[1]] + numbers[2:]) or self.is_ok(test, [numbers[0] * numbers[1]] + numbers[2:])
+        if self.is_ok(test, [numbers[0] + numbers[1]] + numbers[2:]) or self.is_ok(test, [numbers[0] * numbers[1]] + numbers[2:]):
+            return True
+        if part == 2 and  self.is_ok(test, [int(str(numbers[0]) + str(numbers[1]))] + numbers[2:]):
+            return True
+        return False
 
     def solve(self):
-        return sum(line[0] for line in self.input if self.is_ok(line[0], line[1]))
+        return sum(line[0] for line in self.input if self.is_ok(line[0], line[1], 1))
 
     def solve2(self):
-        return 0
+        return sum(line[0] for line in self.input if self.is_ok(line[0], line[1], 2))
 
 ### No change after this ###
 
