@@ -30,5 +30,4 @@ solver = Solver(f.read().strip().split('\n'))
 for part in parts:
     start = time.time()
     result = solver.solve(part)
-    length = time.time() - start
-    print(f"Part {part}: \033[1;31m{result:<8d}\033[0m ({length*1000:.0f} ms)")
+    print("Part %d: \033[1;31m%-10d\033[0m (%.0f ms)" % (part, result, (time.time() - start)*1000))
