@@ -71,4 +71,4 @@ for part in parts:
     start = time.time()
     result = solver.solve(part)
     length = time.time() - start
-    print(f"Puzzle {part}: \033[1;31m{result}\033[0m in {length*1000:.0f} ms")
+    print(f"Part {part}: \033[1;31m{result:<8d}\033[0m ({length*1000:.0f} ms)")
