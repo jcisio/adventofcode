@@ -6,8 +6,8 @@ https://adventofcode.com/2024/day/7
 import time
 
 
-example = False
-parts = [1]
+example = True
+parts = [1, 2]
 
 class Problem:
     def __init__(self, input):
@@ -21,9 +21,9 @@ class Problem:
             return False
         if len(numbers) == 1:
             return test == numbers[0]
-        if self.is_ok(test, [numbers[0] + numbers[1]] + numbers[2:]) or self.is_ok(test, [numbers[0] * numbers[1]] + numbers[2:]):
+        if self.is_ok(test, [numbers[0] + numbers[1]] + numbers[2:], part) or self.is_ok(test, [numbers[0] * numbers[1]] + numbers[2:], part):
             return True
-        if part == 2 and  self.is_ok(test, [int(str(numbers[0]) + str(numbers[1]))] + numbers[2:]):
+        if part == 2 and self.is_ok(test, [int(str(numbers[0]) + str(numbers[1]))] + numbers[2:], part):
             return True
         return False
 
