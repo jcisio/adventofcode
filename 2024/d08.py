@@ -30,9 +30,29 @@ class Problem:
                     if 0 <= a[j][0]*2-a[i][0] < self.nr and 0 <= a[j][1]*2-a[i][1] < self.nc:
                         antinodes.add((a[j][0]*2-a[i][0], a[j][1]*2-a[i][1]))
         return len(antinodes)
+    
+    def print(self, antinodes):
+        for i in range(self.nr):
+            for j in range(self.nc):
+                print('#' if (i,j) in antinodes else '.', end='')
+            print()
 
     def solve2(self):
-        return 0
+        antinodes = set()
+        for a in self.antennas.values():
+            for i in range(len(a)):
+                for j in range(len(a)):
+                    if i != j:
+                        d = (a[i][0]-a[j][0], a[i][1]-a[j][1])
+                        k = 1
+                        while 0 <= a[j][0]+d[0]*k < self.nr and 0 <= a[j][1]+d[1]*k < self.nc:
+                            antinodes.add((a[j][0]+d[0]*k, a[j][1]+d[1]*k))
+                            k += 1
+            if len(a) > 1:
+                antinodes.update(a)
+            
+        #self.print(antinodes)
+        return len(antinodes)
 
 ### No change after this ###
 
