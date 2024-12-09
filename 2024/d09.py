@@ -12,10 +12,15 @@ parts = [1, 2]
 class Problem:
     def __init__(self, input):
         blocks = []
+        pos = []
         disk = list(map(int, list(input[0])))
         for b in range(len(disk)):
+            pos.append(len(blocks))
             blocks += [b//2 if b%2==0 else '.'] * disk[b]
+        self.disk = disk
         self.blocks = blocks
+        self.files = len(disk) // 2 # last file
+        self.pos = pos
 
     def print(self):
         for b in self.blocks: print(b, end='')
@@ -33,9 +38,34 @@ class Problem:
             #print(' ', l, r)
         #self.print()
         return sum([self.blocks[i]*i for i in range(r+1)])
+    
+    def sum(self):
+        return sum([(0 if self.blocks[i]=='.' else self.blocks[i])*i for i in range(len(self.blocks))])
+
+    def find_spaces(self, size):
+        i = -1
+        while i < len(self.blocks)-1:
+            i += 1
+            if self.blocks[i] != '.':
+                continue
+            d = 0
+            while i+d < len(self.blocks) and self.blocks[i+d] == '.':
+                if d == size-1:
+                    return i
+                d += 1
+        return -1
 
     def solve2(self):
-        return 0
+        #self.print()
+        for f in range(self.files, -1, -1):
+            file_pos = self.pos[f*2]
+            size = self.disk[f*2]
+            pos = self.find_spaces(size)
+            if pos > -1 and pos < file_pos:
+                self.blocks[pos:pos+size], self.blocks[file_pos:file_pos+size] = self.blocks[file_pos:file_pos+size], self.blocks[pos:pos+size]
+                #self.print()
+                #print(' ', f)
+        return self.sum()
 
 ### No change after this ###
 
