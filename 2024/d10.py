@@ -28,11 +28,20 @@ class Problem:
                 ends.update(self.count_next(r+dr, c+dc))
         return ends
 
+    def count_next2(self, r, c):
+        if self.map[(r, c)] == 9:
+            return 1
+        count = 0
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            if (r+dr, c+dc) in self.map and self.map[(r+dr, c+dc)] == self.map[(r, c)]+1:
+                count += self.count_next2(r+dr, c+dc)
+        return count
+
     def solve(self):
         return sum([len(self.count_next(r, c)) for r in range(self.nr) for c in range(self.nc) if self.map[(r, c)] == 0])
 
     def solve2(self):
-        return 0
+        return sum([self.count_next2(r, c) for r in range(self.nr) for c in range(self.nc) if self.map[(r, c)] == 0])
 
 ### No change after this ###
 
