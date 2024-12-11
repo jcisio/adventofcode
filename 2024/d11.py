@@ -4,6 +4,7 @@ Advent Of Code
 https://adventofcode.com/2024/day/11
 """
 import time
+from collections import defaultdict
 
 
 example = False
@@ -11,29 +12,33 @@ parts = [1, 2]
 
 class Problem:
     def __init__(self, input):
-        self.input = list(map(int, input[0].split()))
+        self.input = {i:1 for i in map(int, input[0].split())}
 
     def blink(self, stones):
-        new = []
+        new = defaultdict(int)
         for s in stones:
             if s == 0:
-                new.append(1)
+                new[1] += stones[s]
             else:
                 ss = str(s)
                 l = len(ss)
                 if l % 2 == 0:
-                    new += [int(ss[0:l//2]), int(ss[l//2:])]
+                    new[int(ss[0:l//2])] += stones[s]
+                    new[int(ss[l//2:])] += stones[s]
                 else:
-                    new.append(s * 2024)
+                    new[s * 2024] += stones[s]
         return new
 
+
     def solve(self):
-        for i in range(25):
+        for _ in range(25):
             self.input = self.blink(self.input)
-        return len(self.input)
+        return sum(self.input.values())
 
     def solve2(self):
-        return 0
+        for _ in range(75):
+            self.input = self.blink(self.input)
+        return sum(self.input.values())
 
 ### No change after this ###
 
