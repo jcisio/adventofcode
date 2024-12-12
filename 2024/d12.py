@@ -6,7 +6,7 @@ https://adventofcode.com/2024/day/12
 import time
 
 
-example = False
+example = True
 parts = [1, 2]
 
 class Problem:
@@ -30,21 +30,62 @@ class Problem:
                     self.fill(r+d[0], c+d[1], region, bound)
         bound[(r, c)] = b
 
-    def cost(self, r, c, visited):
+    def cost(self, r, c, visited, discount):
         if (r, c) in visited:
             return 0
         region = set()
         bound = {}
         self.fill(r, c, region, bound)
         visited.update(region)
-        return len(region) * (len(region)*4 - sum(bound.values()))
+        
+        if not discount:
+            cost = len(region)*4 - sum(bound.values())
+        else:
+            fences = set()
+            for r, c in region:
+                for d in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+                    if (r+d[0], c+d[1]) in region:
+                        continue
+                    if d == (0, 1):
+                        fence = (r, c+1, 'down')
+                    elif d == (1, 0):
+                        fence = (r+1, c, 'right')
+                    elif d == (0, -1):
+                        fence = (r, c, 'down')
+                    elif d == (-1, 0):
+                        fence = (r, c, 'right')
+                    fences.add((fence))
+            paid = set()
+            cost = 0
+            for fence in fences:
+                if fence in paid:
+                    continue
+                paid.add(fence)
+                cost += 1
+                while True:
+                    updated = False
+                    for o in fences:
+                        if o not in paid:
+                            if o[2] == 'down':
+                                if (o[0]-1, o[1], o[2]) in paid or (o[0]+1, o[1], o[2]) in paid:
+                                    paid.add(o)
+                                    updated = True
+                            else:
+                                if (o[0], o[1]-1, o[2]) in paid or (o[0], o[1]+1, o[2]) in paid:
+                                    paid.add(o)
+                                    updated = True
+                    if not updated:
+                        break
+
+        return len(region) * cost
 
     def solve(self):
         visited = set()
-        return sum(self.cost(r, c, visited) for r, c in self.plants)
+        return sum(self.cost(r, c, visited, False) for r, c in self.plants)
 
     def solve2(self):
-        return 0
+        visited = set()
+        return sum(self.cost(r, c, visited, True) for r, c in self.plants)
 
 ### No change after this ###
 
