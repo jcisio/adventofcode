@@ -18,35 +18,32 @@ class Problem:
         self.nr = len(input)
         self.nc = len(input[0])
 
-    def fill(self, r, c, region, bound):
+    def fill(self, r, c, region):
         if (r, c) in region:
             return
         region.add((r, c))
-        b = 0
         for d in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             if 0 <= r + d[0] < self.nr and 0 <= c + d[1] < self.nc:
                 if self.plants[(r, c)] == self.plants[(r+d[0], c+d[1])]:
-                    b += 1
-                    self.fill(r+d[0], c+d[1], region, bound)
-        bound[(r, c)] = b
+                    self.fill(r+d[0], c+d[1], region)
 
     def cost(self, r, c, visited, discount):
         if (r, c) in visited:
             return 0
         region = set()
-        bound = {}
-        self.fill(r, c, region, bound)
+        self.fill(r, c, region)
         visited.update(region)
-        
+
+        fences = set()
+        for r, c in region:
+            for d in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+                if (r+d[0], c+d[1]) in region:
+                    continue
+                fences.add((r, c, d))
+
         if not discount:
-            cost = len(region)*4 - sum(bound.values())
+            cost = len(fences)
         else:
-            fences = set()
-            for r, c in region:
-                for d in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-                    if (r+d[0], c+d[1]) in region:
-                        continue
-                    fences.add((r, c, d))
             paid = set()
             cost = 0
             for fence in fences:
@@ -58,12 +55,10 @@ class Problem:
                     updated = False
                     for o in fences:
                         if o not in paid:
-                            if o[2][0] == 0:
-                                if (o[0]-1, o[1], o[2]) in paid or (o[0]+1, o[1], o[2]) in paid:
-                                    paid.add(o)
-                                    updated = True
-                            else:
-                                if (o[0], o[1]-1, o[2]) in paid or (o[0], o[1]+1, o[2]) in paid:
+                            for d in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+                                # Only two directions are possible, the other two are never in the fences
+                                # so we can ignore them and simply check all directions.
+                                if (o[0]+d[0], o[1]+d[1], o[2]) in paid:
                                     paid.add(o)
                                     updated = True
                     if not updated:
