@@ -46,15 +46,7 @@ class Problem:
                 for d in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
                     if (r+d[0], c+d[1]) in region:
                         continue
-                    if d == (0, 1):
-                        fence = (r, c+1, 'down')
-                    elif d == (1, 0):
-                        fence = (r+1, c, 'right')
-                    elif d == (0, -1):
-                        fence = (r, c, 'down')
-                    elif d == (-1, 0):
-                        fence = (r, c, 'right')
-                    fences.add((fence))
+                    fences.add((r, c, d))
             paid = set()
             cost = 0
             for fence in fences:
@@ -66,7 +58,7 @@ class Problem:
                     updated = False
                     for o in fences:
                         if o not in paid:
-                            if o[2] == 'down':
+                            if o[2][0] == 0:
                                 if (o[0]-1, o[1], o[2]) in paid or (o[0]+1, o[1], o[2]) in paid:
                                     paid.add(o)
                                     updated = True
