@@ -38,7 +38,7 @@ class Problem:
         return sum([self.min_token(m) for m in self.machines])
 
     def solve2(self):
-        return 0
+        return sum([self.min_token({"a":m["a"], "b":m["b"],"prize":(m["prize"][0]+10000000000000,m["prize"][1]+10000000000000)}) for m in self.machines])
 
 ### No change after this ###
 
