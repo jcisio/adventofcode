@@ -21,18 +21,43 @@ class Problem:
             r[0] = (r[0] + r[2]) % self.X
             r[1] = (r[1] + r[3]) % self.Y
 
-    def solve(self):
-        #self.X, self.Y = 11, 7
-        for _ in range(100):
-            self.move()
+    def quadrants(self):
         s1 = sum(1 for r in self.robots if r[0] < self.X//2 and r[1] < self.Y//2)
         s2 = sum(1 for r in self.robots if r[0] > self.X//2 and r[1] < self.Y//2)
         s3 = sum(1 for r in self.robots if r[0] < self.X//2 and r[1] > self.Y//2)
         s4 = sum(1 for r in self.robots if r[0] > self.X//2 and r[1] > self.Y//2)
-        print(s1, s2, s3, s4)
+        return s1, s2, s3, s4 # top left, top right, bottom left, bottom right
+
+    def solve(self):
+        #self.X, self.Y = 11, 7
+        for _ in range(100):
+            self.move()
+        s1, s2, s3, s4 = self.quadrants()
+        #print(s1, s2, s3, s4)
         return s1*s2*s3*s4
+    
+    def print(self):
+        for y in range(self.Y):
+            for x in range(self.X):
+                if any(r[0] == x and r[1] == y for r in self.robots):
+                    print("#", end="")
+                else:
+                    print(".", end="")
+            print()
+
+    def is_tree(self):
+        robots = set([(r[0], r[1]) for r in self.robots])
+        for axe in range(-20, 20):
+            middle = self.X//2 - axe
+            ok = sum(1 for r in robots if any((middle*2-r[0]+i, r[1]) in robots for i in range(-3, 4)))
+            if ok >= 0.7*len(robots): return True
+        return False
 
     def solve2(self):
+        for i in range(10000):
+            self.move()
+            if self.is_tree():
+                print(i)
         return 0
 
 ### No change after this ###
