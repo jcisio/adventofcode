@@ -5,6 +5,7 @@ https://adventofcode.com/2024/day/14
 """
 import time
 import parse
+from PIL import Image
 
 
 example = False
@@ -47,17 +48,26 @@ class Problem:
 
     def is_tree(self):
         robots = set([(r[0], r[1]) for r in self.robots])
-        for axe in range(-20, 20):
+        for axe in range(-30, 30):
             middle = self.X//2 - axe
-            ok = sum(1 for r in robots if any((middle*2-r[0]+i, r[1]) in robots for i in range(-3, 4)))
-            if ok >= 0.7*len(robots): return True
+            ok = sum(1 for r in robots if (middle*2-r[0], r[1]) in robots)/len(robots)
+            if ok >= 0.7:
+                return True
         return False
+    
+    def generate_image(self, i):
+        img = Image.new('RGB', (self.X, self.Y), 'black')
+        pixels = img.load()
+        for r in self.robots:
+            pixels[r[0], r[1]] = (255, 255, 255)
+        img.save(f"output{i}.png")
 
     def solve2(self):
-        for i in range(10000):
+        for i in range(1, 10000):
             self.move()
+            #self.generate_image(i)
             if self.is_tree():
-                print(i)
+                return i
         return 0
 
 ### No change after this ###
