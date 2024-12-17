@@ -15,8 +15,8 @@ echo '"""' >> d$1.py
 git add d$1.py
 
 # Try to guess the example input.
-cat tmp | sed -n '/^    /,$p' | sed -n '1,/^$/p' | sed 's/    //' > d$1.in
-git add d$1.in
+# cat tmp | sed -n '/^    /,$p' | sed -n '1,/^$/p' | sed 's/    //' > d$1.in
+# git add d$1.in
 
 # Write real input in a test file, do not commit it.
 # https://www.reddit.com/r/adventofcode/wiki/faqs/copyright/inputs/

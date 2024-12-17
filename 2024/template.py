@@ -1,7 +1,20 @@
+class Solver:
+    def __init__(self, input):
+        if input == '.test':
+            f = open(__file__[:-3] + input, 'r')
+            self.input = f.read().strip().split('\n')
+        else:
+            self.input = input.split('\n')
+
+    def solve(self, part):
+        problem = Problem(self.input)
+        return problem.solve() if part==1 else problem.solve2()
+
+### No change before this ###
+
 import time
 
 
-example = True
 parts = [1, 2]
 
 class Problem:
@@ -14,19 +27,15 @@ class Problem:
     def solve2(self):
         return 0
 
+in1 = """
+
+"""
+assert(Solver(in1).solve(1) == 0)
+assert(Solver(in1).solve(2) == 0)
+
 ### No change after this ###
 
-class Solver:
-    def __init__(self, input):
-        self.input = input
-
-    def solve(self, part):
-        problem = Problem(self.input)
-        return problem.solve() if part==1 else problem.solve2()
-
-
-f = open(__file__[:-3] + ('.in' if example else '.test'), 'r')
-solver = Solver(f.read().strip().split('\n'))
+solver = Solver('.test')
 for part in parts:
     start = time.time()
     result = solver.solve(part)
