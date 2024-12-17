@@ -7,47 +7,57 @@ import time
 
 
 example = False
-parts = [1, 2]
+parts = [1,2]
 
 class Problem:
     def __init__(self, input):
         self.R = [int(input[i].split(': ')[1]) for i in range(3)]
         self.prog = list(map(int, input[4].split(': ')[1].split(',')))
-        self.p = 0
 
-    def combo(self, op):
+    def combo(self, op, R):
         if 4 <= op <= 6:
-            return self.R[op-4]
+            return R[op-4]
         else:
             return op
 
-    def solve(self):
+    def run(self, R, prog):
         output = []
-        while self.p < len(self.prog):
-            p = self.p
-            self.p += 2
-            if self.prog[p] == 0:
-                self.R[0] = self.R[0] // (2**self.combo(self.prog[p+1]))
-            elif self.prog[p] == 1:
-                self.R[1] = self.R[1] ^ self.prog[p+1]
-            elif self.prog[p] == 2:
-                self.R[1] = self.combo(self.prog[p+1]) % 8
-            elif self.prog[p] == 3:
-                if self.R[0] != 0:
-                    self.p = self.prog[p+1]
-            elif self.prog[p] == 4:
-                self.R[1] = self.R[1] ^ self.R[2]
-            elif self.prog[p] == 5:
-                output.append(self.combo(self.prog[p+1]) % 8)
-            elif self.prog[p] == 6:
-                self.R[1] = self.R[0] // (2**self.combo(self.prog[p+1]))
-            elif self.prog[p] == 7:
-                self.R[2] = self.R[0] // (2**self.combo(self.prog[p+1]))
-        print(','.join(map(str,output)))
+        p = 0
+        while p < len(prog):
+            np = p + 2
+            if prog[p] == 0:
+                R[0] = R[0] // (2**self.combo(prog[p+1], R))
+            elif prog[p] == 1:
+                R[1] = self.R[1] ^ prog[p+1]
+            elif prog[p] == 2:
+                R[1] = self.combo(prog[p+1], R) % 8
+            elif prog[p] == 3:
+                if R[0] != 0:
+                    np = prog[p+1]
+            elif prog[p] == 4:
+                R[1] = R[1] ^ R[2]
+            elif prog[p] == 5:
+                output.append(self.combo(prog[p+1], R) % 8)
+            elif prog[p] == 6:
+                R[1] = R[0] // (2**self.combo(prog[p+1], R))
+            elif prog[p] == 7:
+                R[2] = R[0] // (2**self.combo(prog[p+1], R))
+            p = np
+        return ','.join(map(str,output))
+
+    def solve(self):
+        print(self.run(self.R, self.prog))
         return 0
 
     def solve2(self):
-        return 0
+        prog = ','.join(map(str,self.prog))
+        R = [1, 0, 0]
+        while True:
+            if prog == self.run(R.copy(), self.prog):
+                break
+            R[0] += 1
+            if R[0]%1000 == 0: print(R[0])
+        return R[0]
 
 ### No change after this ###
 
