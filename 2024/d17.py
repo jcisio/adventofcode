@@ -7,7 +7,7 @@ import time
 
 
 example = False
-parts = [1,2]
+parts = [1, 2]
 
 class Problem:
     def __init__(self, input):
@@ -20,44 +20,54 @@ class Problem:
         else:
             return op
 
-    def run(self, R, prog):
+    def run(self, A, match=[]):
         output = []
+        R = [A, 0, 0]
+        prog = self.prog
         p = 0
         while p < len(prog):
             np = p + 2
+            c = self.combo(prog[p+1], R)
             if prog[p] == 0:
-                R[0] = R[0] // (2**self.combo(prog[p+1], R))
+                R[0] = R[0] // (2**c)
             elif prog[p] == 1:
-                R[1] = self.R[1] ^ prog[p+1]
+                R[1] = R[1] ^ prog[p+1]
             elif prog[p] == 2:
-                R[1] = self.combo(prog[p+1], R) % 8
+                R[1] = c % 8
             elif prog[p] == 3:
                 if R[0] != 0:
                     np = prog[p+1]
             elif prog[p] == 4:
                 R[1] = R[1] ^ R[2]
             elif prog[p] == 5:
-                output.append(self.combo(prog[p+1], R) % 8)
+                output.append(c % 8)
+                # Early quit to save time.
+                if len(output) <= len(match) and output[-1] != match[len(output)-1]:
+                    return []
             elif prog[p] == 6:
-                R[1] = R[0] // (2**self.combo(prog[p+1], R))
+                R[1] = R[0] // (2**c)
             elif prog[p] == 7:
-                R[2] = R[0] // (2**self.combo(prog[p+1], R))
+                R[2] = R[0] // (2**c)
             p = np
-        return ','.join(map(str,output))
+        return output
 
     def solve(self):
-        print(self.run(self.R, self.prog))
+        print(','.join(map(str,self.run(self.R[0]))))
         return 0
 
     def solve2(self):
-        prog = ','.join(map(str,self.prog))
-        R = [1, 0, 0]
-        while True:
-            if prog == self.run(R.copy(), self.prog):
-                break
-            R[0] += 1
-            if R[0]%1000 == 0: print(R[0])
-        return R[0]
+        L = len(self.prog)
+        tests = [(0, L-1)]
+        while tests:
+            a, i = tests.pop(0)
+            for j in range(8):
+                if self.run(a*8+j, self.prog[i:]):
+                    if i == 0:
+                        return a*8+j
+                    tests.append((a*8+j, i-1))
+                    # print(tests)
+
+        return 0
 
 ### No change after this ###
 
