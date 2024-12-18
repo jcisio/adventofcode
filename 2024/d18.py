@@ -18,11 +18,9 @@ class Solver:
 ### No change before this ###
 
 import time
-from collections import defaultdict
-from heapq import heappop, heappush
 
 
-parts = [1]
+parts = [1, 2]
 
 class Problem:
     def __init__(self, input):
@@ -36,27 +34,31 @@ class Problem:
                 print(' ' if (x, y) in self.input[0:self.top] else '#', end='')
             print()
 
-    def solve(self):
-        best = defaultdict(lambda: 1e9)
-        grid = set(self.input[:self.top])
+    def find(self, top):
+        grid = set(self.input[:top])
         q = [(0, 0, 0)]
         seen = set()
         # self.print()
         while q:
-            dist, x, y = heappop(q)
-            best[x,y] = dist
+            dist, x, y = q.pop(0)
             if (x,y) == (self.N-1,self.N-1):
                 return dist
-            # print(x,y,dist)
             for dx,dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
                 nx,ny = x+dx, y+dy
                 if 0 <= nx < self.N and 0 <= ny < self.N and (nx,ny) not in grid and (nx,ny) not in seen:
-                    heappush(q, (dist+1, nx, ny))
+                    q.append((dist+1, nx, ny))
                     seen.add((nx,ny))
         return 0
 
+    def solve(self):
+        return self.find(self.top)
+
     def solve2(self):
-        return 0
+        top = self.top + 1
+        while self.find(top) > 0:
+            top += 1
+        print(self.input[top-1])
+        return top
 
 in1 = """
 5,4
@@ -86,7 +88,7 @@ in1 = """
 2,0
 """
 assert(Solver(in1).solve(1) == 22)
-# assert(Solver(in1).solve(2) == 0)
+assert(Solver(in1).solve(2) == 21)
 
 ### No change after this ###
 
