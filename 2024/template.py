@@ -4,7 +4,7 @@ class Solver:
             f = open(__file__[:-3] + input, 'r')
             self.input = f.read().strip().split('\n')
         else:
-            self.input = input.split('\n')
+            self.input = input.strip().split('\n')
 
     def solve(self, part):
         problem = Problem(self.input)
