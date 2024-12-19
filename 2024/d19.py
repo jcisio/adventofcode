@@ -19,6 +19,7 @@ class Solver:
 
 import time
 from collections import defaultdict
+from functools import cache
 
 
 parts = [1, 2]
@@ -27,40 +28,18 @@ class Problem:
     def __init__(self, input):
         self.patterns = input[0].split(', ')
         self.designs = input[2:]
-        self.tested = {p: True for p in self.patterns}
-        self.count = defaultdict(int)
 
-    def is_possible(self, design):
-        if design == '':
-            return True
-        if design in self.tested:
-            return self.tested[design]
-        self.tested[design] = sum(self.is_possible(design[len(p):]) for p in self.patterns if design[0:len(p)]==p)
-        return self.tested[design]
-
-    def possibility(self, design):
+    @cache
+    def count(self, design):
         if design == '':
             return 1
-        if design in self.count:
-            return self.count[design]
-
-        ok = [p for p in self.patterns if design[0:len(p)]==p]
-        if len(ok) == 0:
-            self.count[design] = 0
-        elif len(ok) == 1:
-            self.count[ok[0]] = 1
-            self.count[design] = self.possibility(design[len(ok[0]):])
-        else:
-            # print(ok)
-            self.count[design] = sum(self.possibility(design[len(p):]) for p in ok if len(p) < len(design)) + sum(1 if len(p) == len(design) else 0 for p in ok)
-        # print(design, self.count[design], self.count)
-        return self.count[design]
+        return sum(self.count(design[len(p):]) for p in self.patterns if design[0:len(p)]==p)
 
     def solve(self):
-        return sum(1 if self.is_possible(d) else 0 for d in self.designs)
+        return sum(1 if self.count(d) > 0 else 0 for d in self.designs)
 
     def solve2(self):
-        return sum(self.possibility(d) for d in self.designs)
+        return sum(self.count(d) for d in self.designs)
 
 in1 = """
 r, wr, b, g, bwu, rb, gb, br
