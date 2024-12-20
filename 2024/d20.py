@@ -19,7 +19,6 @@ class Solver:
 
 import time
 from collections import defaultdict
-from heapq import heappop, heappush
 
 
 class Problem:
@@ -38,15 +37,12 @@ class Problem:
         q = [(0, self.start)]
         dist = defaultdict(lambda: 1e9)
         while q:
-            d, pos = heappop(q)
-            if d > dist[pos]:
-                continue
-            else:
-                dist[pos] = d
+            d, pos = q.pop(0)
+            dist[pos] = d
             for dir in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
                 new_pos = (pos[0] + dir[0], pos[1] + dir[1])
                 if new_pos in self.route and d < dist[new_pos]:
-                    heappush(q, (d+1, new_pos))
+                    q.append((d+1, new_pos))
         self.dist = dist
 
     def count_cheats(self, m):
