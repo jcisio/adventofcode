@@ -22,8 +22,6 @@ from collections import defaultdict
 from heapq import heappop, heappush
 
 
-parts = [1]
-
 class Problem:
     def __init__(self, input):
         self.route = set()
@@ -51,22 +49,28 @@ class Problem:
                     heappush(q, (d+1, new_pos))
         self.dist = dist
 
-    def solve(self):
+    def count_cheats(self, m):
         cheats = {}
         for r in self.route:
-            for dir in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
-                if (r[0] + dir[0], r[1] + dir[1]) not in self.route and (r[0] + 2*dir[0], r[1] + 2*dir[1]) in self.route:
-                    if self.dist[r[0] + 2*dir[0], r[1] + 2*dir[1]] - self.dist[r] > 2:
-                        cheats[r, dir] = self.dist[r[0] + 2*dir[0], r[1] + 2*dir[1]] - self.dist[r] - 2
+            for d1 in range(m+1):
+                for d2 in range(m+1-d1):
+                    for d in [(1, 1), (1, -1), (-1, -1), (-1, 1)]:
+                        r2 = (r[0] + d[0]*d1, r[1] + d[1]*d2)
+                        if r != r2 and r2 in self.route:
+                            if self.dist[r2] - self.dist[r] > d1+d2:
+                                cheats[r, r2] = self.dist[r2] - self.dist[r] - d1 - d2
         save = defaultdict(int)
         for c in cheats:
             save[cheats[c]] += 1
-        for s in sorted(save):
-            print(save[s], s)
+        return save
+
+    def solve(self):
+        save = self.count_cheats(2)
         return sum(save[s] for s in save if s >= 100)
 
     def solve2(self):
-        return 0
+        save = self.count_cheats(20)
+        return sum(save[s] for s in save if s >= 100)
 
 in1 = """
 ###############
@@ -85,8 +89,9 @@ in1 = """
 #...#...#...###
 ###############
 """
-assert(Solver(in1).solve(1) == 0)
+# assert(Solver(in1).solve(1) == 0)
 # assert(Solver(in1).solve(2) == 0)
+parts = [1, 2]
 
 ### No change after this ###
 

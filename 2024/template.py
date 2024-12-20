@@ -15,8 +15,6 @@ class Solver:
 import time
 
 
-parts = [1, 2]
-
 class Problem:
     def __init__(self, input):
         self.input = input
@@ -32,6 +30,7 @@ in1 = """
 """
 assert(Solver(in1).solve(1) == 0)
 assert(Solver(in1).solve(2) == 0)
+parts = [1, 2]
 
 ### No change after this ###
 
