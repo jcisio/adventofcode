@@ -29,8 +29,8 @@ in1 = """
 
 """
 assert(Solver(in1).solve(1) == 0)
-assert(Solver(in1).solve(2) == 0)
-parts = [1, 2]
+# assert(Solver(in1).solve(2) == 0)
+parts = []
 
 ### No change after this ###
 
