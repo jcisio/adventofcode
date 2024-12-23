@@ -38,4 +38,4 @@ solver = Solver('.test')
 for part in parts:
     start = time.time()
     result = solver.solve(part)
-    print("Part %d: \033[1;31m%-10d\033[0m (%.0f ms)" % (part, result, (time.time() - start)*1000))
+    print("Part %d: \033[1;31m%-10s\033[0m (%.0f ms)" % (part, result, (time.time() - start)*1000))

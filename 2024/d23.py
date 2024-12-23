@@ -40,7 +40,19 @@ class Problem:
 
 
     def solve2(self):
-        return 0
+        groups = [set(c) for c in self.connections if c[0] < c[1]]
+        while True:
+            flag = False
+            for g in groups:
+                for c in self.computers:
+                    if c not in g and all([(c, x) in self.connections for x in g]):
+                        g.add(c)
+                        flag = True
+            if not flag:
+                break
+        m = max([len(g) for g in groups])
+        group = [g for g in groups if len(g) == m][0]
+        return ','.join(sorted(group))
 
 in1 = """
 kh-tc
@@ -77,8 +89,8 @@ tb-vc
 td-yn
 """
 assert(Solver(in1).solve(1) == 7)
-# assert(Solver(in1).solve(2) == 0)
-parts = [1]
+assert(Solver(in1).solve(2) == "co,de,ka,ta")
+parts = [1, 2]
 
 ### No change after this ###
 
@@ -86,4 +98,4 @@ solver = Solver('.test')
 for part in parts:
     start = time.time()
     result = solver.solve(part)
-    print("Part %d: \033[1;31m%-10d\033[0m (%.0f ms)" % (part, result, (time.time() - start)*1000))
+    print("Part %d: \033[1;31m%-10s\033[0m (%.0f ms)" % (part, result, (time.time() - start)*1000))
