@@ -18,7 +18,7 @@ class Solver:
 ### No change before this ###
 
 import time
-from heapq import heappush, heappop
+from itertools import permutations, combinations
 
 
 class Problem:
@@ -91,50 +91,40 @@ class Problem:
         return -1, None
 
     def solve2(self):
-        opss = {k: self.ops[k] for k in self.ops}
-        b, dep = self.find(opss)
-        ko = f'z{b:02d}'
-        ok = dep[f'z{b-1:02d}']
-        candidates = dep[ko].difference(ok)
-        candidates.add(ko)
-        q = []
-        for c1 in candidates:
-            for c2 in set(opss.keys()).difference(ok):
-                if c1 == c2:
-                    continue
-                opss2 = {k: v for k,v in opss.items()}
-                opss2[c1] = opss[c2]
-                opss2[c2] = opss[c1]
-                bb, _ = self.find(opss2)
-                if bb > b:
-                    heappush(q, (-bb, (c1, c2)))
+        # A    XOR B    -> VAL0     <= FAGate0
+        # A    AND B    -> VAL1     <= FAGate1
+        # VAL0 AND CIN  -> VAL2     <= FAGate2
+        # VAL0 XOR CIN  -> SUM      <= FAGate3
+        # VAL1 OR  VAL2 -> COUT     <= FAGate4
+        ops = self.ops
+        vv = ops.values()
 
-        while q:
-            b, swaps = heappop(q)
-            b = -b
-            swaps = list(swaps)
-            if len(swaps) >= 8:
-                continue
-            opss2 = {k: v for k,v in opss.items()}
-            for i in range(len(swaps)//2):
-                opss2[swaps[i*2]], opss2[swaps[i*2+1]] = opss2[swaps[i*2+1]], opss2[swaps[i*2]]
-            b2, dep = self.find(opss2)
-            ko = f'z{b2:02d}'
-            ok = dep[f'z{b2-1:02d}']
-            candidates = dep[ko].difference(ok)
-            candidates.add(ko)
-            for c1 in candidates:
-                for c2 in set(opss.keys()).difference(ok):
-                    if c1 == c2 or c1 in swaps or c2 in swaps:
-                        continue
-                    opss3 = {k: v for k,v in opss2.items()}
-                    opss3[c1], opss3[c2] = opss3[c2], opss3[c1]
-                    b3, _ = self.find(opss3)
-                    if b3 == -1:
-                        print(swaps, c1, c2)
-                    if b3 > b2:
-                        heappush(q, (-b3, tuple(swaps + [c1, c2])))
-        return 0
+        xyxor_out = {k for k in ops if ops[k][0] == 'XOR' and ops[k][1][0] in 'xy' and ops[k][2][0] in 'xy'}
+        xyand_out = {k for k in ops if ops[k][0] == 'AND' and ops[k][1][0] in 'xy' and ops[k][2][0] in 'xy' and ops[k][1][1:]!='00'}
+        and_out = {k[3] for k in vv if k[0] == 'AND' and k[1][1:] != '00'}
+        or_in = {k[1] for k in vv if k[0] == 'OR'} | {k[2] for k in vv if k[0] == 'OR'}
+        and_in = {k[1] for k in vv if k[0] == 'AND'} | {k[2] for k in vv if k[0] == 'AND'}
+        xor_in = {k[1] for k in vv if k[0] == 'XOR'} | {k[2] for k in vv if k[0] == 'XOR'}
+        or_out = {k[3] for k in vv if k[0] == 'OR'}
+        xor_out = {k[3] for k in vv if k[0] == 'XOR'}
+
+        # gate 0
+        wrong0 = [k for k in xyxor_out if k not in and_in and k not in xor_in and k[1:] != '00']
+
+        # gate 1
+        wrong1 = [k for k in xyand_out if k not in or_in]
+
+        # gate 2
+        wrong2 = [k for k in and_out.difference(xyand_out) if k not in or_in]
+
+        # gate 3
+        wrong3 = [k for k in xor_out.difference(xyxor_out) if k[0] != 'z']
+
+        # gate 4
+        wrong4 = [k for k in or_out if k not in and_in and k not in xor_in and k != 'z45']
+
+        wrong = wrong0 + wrong1 + wrong2 + wrong3 + wrong4
+        return ','.join(sorted(set(wrong)))
 
 in1 = """
 x00: 0
@@ -159,7 +149,8 @@ x05 AND y05 -> z00
 """
 # assert(Solver(in1).solve(1) == 9)
 # assert(Solver(in1).solve(2) == 'z00,z01,z02,z05')
-parts = [2]
+assert(Solver(".test").solve(2) == 'gjc,gvm,qjj,qsb,wmp,z17,z26,z39')
+parts = [1, 2]
 
 ### No change after this ###
 
