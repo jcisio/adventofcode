@@ -37,7 +37,7 @@ class Problem:
         return sum(sum(1 for k in self.keys if self.fits(l, k)) for l in self.locks)
 
     def solve2(self):
-        return 0
+        return "[Deliver The Chronicle]"
 
 in1 = """
 #####
@@ -81,8 +81,8 @@ in1 = """
 #####
 """
 assert(Solver(in1).solve(1) == 3)
-# assert(Solver(in1).solve(2) == 0)
-parts = [1]
+assert(Solver(in1).solve(2) == "[Deliver The Chronicle]")
+parts = [1, 2]
 
 ### No change after this ###
 
