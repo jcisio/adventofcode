@@ -25,17 +25,26 @@ class Problem:
     def __init__(self, input):
         self.input = input
 
-    def solve(self):
+    def solve(self, pass_zero = False):
         p = 50
         zero = 0
         for i in self.input:
-            p = (p + int(i[1:]) * (1 if i[0] == 'R' else -1)) % 100
-            if p == 0:
+            o_p = p
+            p = p + int(i[1:]) * (1 if i[0] == 'R' else -1)
+            if p%100 == 0:
                 zero += 1
+            if pass_zero:
+                if p > 100:
+                    zero += (p - 1)//100
+                elif p < 0:
+                    zero += (-p - 1) // 100 + 1
+                    if o_p == 0:
+                        zero -= 1
+            p %= 100
         return zero
 
     def solve2(self):
-        return 0
+        return self.solve(True)
 
 in1 = """
 L68
@@ -50,8 +59,8 @@ R14
 L82
 """
 assert(Solver(in1).solve(1) == 3)
-# assert(Solver(in1).solve(2) == 0)
-parts = [1]
+assert(Solver(in1).solve(2) == 6)
+parts = [1, 2]
 
 ### No change after this ###
 
