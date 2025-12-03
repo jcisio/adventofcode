@@ -24,25 +24,24 @@ class Problem:
     def __init__(self, input):
         self.input = input
 
-    def find_max(self, bank):
+    def find_max(self, bank, n=12):
         batteries = [int(i) for i in bank]
-        p, v = 0, 0
-        for i in range(len(batteries) - 1):
-            if v < batteries[i]:
-                p = i
-                v = batteries[i]
-        q, v = p + 1, 0
-        for j in range(p + 1, len(batteries)):
-            if v < batteries[j]:
-                q = j
-                v = batteries[j]
-        return batteries[p]*10 + batteries[q]
+        m = 0
+        start = 0
+        for nn in range(n):
+            p, v = start, 0
+            for i in range(p, len(batteries) - n + nn + 1):
+                if v < batteries[i]:
+                    v = batteries[i]
+                    start = i + 1
+            m = m * 10 + v
+        return m
 
     def solve(self):
-        return sum(self.find_max(i) for i in self.input)
+        return sum(self.find_max(i, 2) for i in self.input)
 
     def solve2(self):
-        return 0
+        return sum(self.find_max(i, 12) for i in self.input)
 
 in1 = """
 987654321111111
@@ -51,8 +50,8 @@ in1 = """
 818181911112111
 """
 assert(Solver(in1).solve(1) == 357)
-# assert(Solver(in1).solve(2) == 0)
-parts = [1]
+assert(Solver(in1).solve(2) == 3121910778619)
+parts = [1, 2]
 
 ### No change after this ###
 
