@@ -40,7 +40,27 @@ class Problem:
         return sum(1 for i in self.available if self.is_fresh(i))
 
     def solve2(self):
-        return 0
+        # merge fresh intervals
+        while True:
+            merged = False
+            for i in range(len(self.fresh)):
+                for j in range(i+1, len(self.fresh)):
+                    if self.fresh[i][0] <= self.fresh[j][0] <= self.fresh[i][1]:
+                        self.fresh[i] = (self.fresh[i][0], max(self.fresh[i][1], self.fresh[j][1]))
+                        del self.fresh[j]
+                        merged = True
+                        break
+                    elif self.fresh[j][0] <= self.fresh[i][0] <= self.fresh[j][1]:
+                        self.fresh[j] = (self.fresh[j][0], max(self.fresh[j][1], self.fresh[i][1]))
+                        del self.fresh[i]
+                        merged = True
+                        break
+                if merged:
+                    break
+            if not merged:
+                break
+
+        return sum(ii[1] - ii[0] + 1 for ii in self.fresh)
 
 in1 = """
 3-5
@@ -56,8 +76,8 @@ in1 = """
 32
 """
 assert(Solver(in1).solve(1) == 3)
-# assert(Solver(in1).solve(2) == 0)
-parts = [1]
+assert(Solver(in1).solve(2) == 14)
+parts = [1, 2]
 
 ### No change after this ###
 
