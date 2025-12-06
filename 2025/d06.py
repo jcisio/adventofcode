@@ -22,14 +22,10 @@ import time
 
 class Problem:
     def __init__(self, input):
-        self.operands = []
-        self.operators = []
-        for line in input[:-1]:
-            self.operands.append(list(map(int, line.split())))
         self.operators = input[-1].split()
         self.input = input
 
-    def solve(self):
+    def compute(self):
         s = 0
         for j in range(len(self.operands[0])):
             result = self.operands[0][j]
@@ -41,8 +37,41 @@ class Problem:
             s += result
         return s
 
+    def solve(self):
+        self.operands = []
+        for line in self.input[:-1]:
+            self.operands.append(list(map(int, line.split())))
+        return self.compute()
+
     def solve2(self):
-        return 0
+        maxlength = max(len(x) for x in self.input[:-1])
+        self.input = [x.ljust(maxlength) for x in self.input]
+        ops = self.input[-1] + ' '
+        width = []
+        for c in ops:
+            if c == ' ':
+                width[-1] += 1
+            else:
+                width.append(0)
+
+        s = 0
+        p = 0
+        # Do each problem
+        for i in range(len(width)):
+            operands = [0] * width[i]
+            for j in range(width[i]-1, -1, -1):
+                for k in range(len(self.input)-1):
+                    if self.input[k][j+p] != ' ':
+                        operands[j] = operands[j] * 10 + int(self.input[k][j+p])
+            p += width[i] + 1
+            result = operands[0]
+            for j in range(1, len(operands)):
+                if self.operators[i] == '*':
+                    result *= operands[j]
+                else:
+                    result += operands[j]
+            s += result
+        return s
 
 in1 = """
 123 328  51 64
@@ -51,8 +80,8 @@ in1 = """
 *   +   *   +
 """
 assert(Solver(in1).solve(1) == 4277556)
-# assert(Solver(in1).solve(2) == 0)
-parts = [1]
+assert(Solver(in1).solve(2) == 3263827)
+parts = [1, 2]
 
 ### No change after this ###
 
