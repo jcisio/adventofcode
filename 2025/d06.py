@@ -25,23 +25,20 @@ class Problem:
         self.operators = input[-1].split()
         self.input = input
 
-    def compute(self):
-        s = 0
-        for j in range(len(self.operands[0])):
-            result = self.operands[0][j]
-            for i in range(1, len(self.operands)):
-                if self.operators[j] == '*':
-                    result *= self.operands[i][j]
-                else:
-                    result += self.operands[i][j]
-            s += result
-        return s
+    def compute(self, operator, operands):
+        result = operands[0]
+        for i in range(1, len(operands)):
+            if operator == '*':
+                result *= operands[i]
+            else:
+                result += operands[i]
+        return result
 
     def solve(self):
         self.operands = []
         for line in self.input[:-1]:
             self.operands.append(list(map(int, line.split())))
-        return self.compute()
+        return sum(self.compute(self.operators[i], [self.operands[j][i] for j in range(len(self.operands))]) for i in range(len(self.operators)))
 
     def solve2(self):
         maxlength = max(len(x) for x in self.input[:-1])
@@ -64,13 +61,7 @@ class Problem:
                     if self.input[k][j+p] != ' ':
                         operands[j] = operands[j] * 10 + int(self.input[k][j+p])
             p += width[i] + 1
-            result = operands[0]
-            for j in range(1, len(operands)):
-                if self.operators[i] == '*':
-                    result *= operands[j]
-                else:
-                    result += operands[j]
-            s += result
+            s += self.compute(self.operators[i], operands)
         return s
 
 in1 = """
