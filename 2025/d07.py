@@ -17,6 +17,7 @@ class Solver:
 
 ### No change before this ###
 
+from collections import defaultdict
 import time
 
 
@@ -41,7 +42,18 @@ class Problem:
         return c
 
     def solve2(self):
-        return 0
+        ts = {self.input[0].find('S'): 1}
+
+        for s in self.input[1:]:
+            ts_next = defaultdict(int)
+            for t in ts:
+                if s[t] == '^':
+                    ts_next[t - 1] += ts[t]
+                    ts_next[t + 1] += ts[t]
+                else:
+                    ts_next[t] += ts[t]
+            ts = ts_next
+        return sum(ts.values())
 
 in1 = """
 .......S.......
@@ -62,8 +74,8 @@ in1 = """
 ...............
 """
 assert(Solver(in1).solve(1) == 21)
-# assert(Solver(in1).solve(2) == 0)
-parts = [1]
+assert(Solver(in1).solve(2) == 40)
+parts = [1, 2]
 
 ### No change after this ###
 
