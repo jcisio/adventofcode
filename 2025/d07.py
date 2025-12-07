@@ -1,0 +1,5 @@
+"""
+Advent Of Code
+--- Day 7: Laboratories ---
+https://adventofcode.com/2025/day/7
+"""
