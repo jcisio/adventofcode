@@ -45,7 +45,11 @@ class Problem:
         return top3[0][1] * top3[1][1] * top3[2][1]
 
     def solve2(self):
-        return 0
+        circuits = {b:i for i, b in enumerate(self.boxes)}
+        for d in self.distances:
+            self.connect(circuits, d)
+            if len(Counter(circuits.values())) == 1:
+                return d[0][0] * d[1][0]
 
 in1 = """
 162,817,812
@@ -70,8 +74,8 @@ in1 = """
 425,690,689
 """
 assert(Solver(in1).solve(1) == 40)
-# assert(Solver(in1).solve(2) == 0)
-parts = [1]
+assert(Solver(in1).solve(2) == 25272)
+parts = [1, 2]
 
 ### No change after this ###
 
