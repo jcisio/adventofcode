@@ -17,9 +17,11 @@ class Solver:
 
 ### No change before this ###
 
-from collections import defaultdict, deque
 from itertools import combinations
 import time
+from scipy.optimize import milp, LinearConstraint
+import numpy as np
+
 
 class Problem:
 
@@ -52,28 +54,23 @@ class Problem:
             return joltage
         def min2(self):
             n = len(self.joltage)
-            queue = deque([(tuple([0]*n), 0)])
-            visited = set()
-            dp = defaultdict(lambda: float('inf'))
-            dp[queue[0]] = 0
-            while queue:
-                current, depth = queue.popleft()
-                if current == self.joltage:
-                    print(depth)
-                    return depth
-                if current in visited:
-                    continue
-                visited.add(current)
+            m = len(self.buttons)
 
-                for b in self.buttons:
-                    new_joltage = list(current)
-                    for j in b:
-                        new_joltage[j] += 1
-                    new_joltage = tuple(new_joltage)
-                    if all(new_joltage[i] <= self.joltage[i] for i in range(n)) and dp[new_joltage] > depth+1:
-                        dp[new_joltage] = depth+1
-                        queue.append((new_joltage, depth+1))
-            return 0
+            # Objective: minimize sum of all button presses (all coefficients = 1)
+            c = np.ones(m)
+
+            # Build constraint matrix A where A[j][i] = 1 if button i affects position j
+            A = np.zeros((n, m))
+            for i in range(m):
+                for j in self.buttons[i]:
+                    A[j][i] = 1
+
+            # Equality constraints: A @ x == joltage
+            constraints = LinearConstraint(A, lb=self.joltage, ub=self.joltage)
+
+            # Optimize with all variables as integers
+            return int(milp(c=c, constraints=constraints, integrality=np.ones(m)).fun)
+
     def __init__(self, input):
         self.input = [Problem.Machine.parse(line) for line in input]
 
