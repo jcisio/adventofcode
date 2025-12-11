@@ -28,19 +28,26 @@ class Problem:
             devices[name] = rest.split(' ')
         self.input = devices
 
-    def solve(self):
-        paths = {'out': 1}
+        paths = {'out': [1, 0, 0]}
         remaining = set(self.input.keys()) - {'out'}
         while remaining:
             for device in remaining.copy():
                 outputs = self.input[device]
                 if all(o in paths for o in outputs):
-                    paths[device] = sum(paths[o] for o in outputs)
+                    paths[device] = [sum(paths[o][0] for o in outputs), sum(paths[o][1] for o in outputs), sum(paths[o][2] for o in outputs)]
+                    if device == 'dac':
+                        paths[device][1] += paths[device][0]
+                    if device == 'fft':
+                        paths[device][2] += paths[device][0]
                     remaining.remove(device)
-        return paths['you']
+        self.paths = paths
+
+    def solve(self):
+        return self.paths['you'][0]
 
     def solve2(self):
-        return 0
+        # print(self.paths['svr'], self.paths['dac'], self.paths['fft'])
+        return self.paths['svr'][2] * self.paths['fft'][1] // self.paths['fft'][0]
 
 in1 = """
 aaa: you hhh
@@ -54,8 +61,23 @@ ggg: out
 hhh: ccc fff iii
 iii: out
 """
+in2 = """
+svr: aaa bbb
+aaa: fft
+fft: ccc
+bbb: tty
+tty: ccc
+ccc: ddd eee
+ddd: hub
+hub: fff
+eee: dac
+dac: fff
+fff: ggg hhh
+ggg: out
+hhh: out
+"""
 assert(Solver(in1).solve(1) == 5)
-# assert(Solver(in1).solve(2) == 0)
+assert(Solver(in2).solve(2) == 2)
 parts = [1, 2]
 
 ### No change after this ###
