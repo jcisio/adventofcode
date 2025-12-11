@@ -1,0 +1,5 @@
+"""
+Advent Of Code
+--- Day 11: Reactor ---
+https://adventofcode.com/2025/day/11
+"""
