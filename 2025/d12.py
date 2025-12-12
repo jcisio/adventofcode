@@ -1,0 +1,5 @@
+"""
+Advent Of Code
+--- Day 12: Christmas Tree Farm ---
+https://adventofcode.com/2025/day/12
+"""
